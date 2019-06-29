@@ -1,16 +1,12 @@
 {
-  "name": "react-boilerplate",
-  "version": "4.0.0",
-  "description": "A highly scalable, offline-first foundation with the best DX and a focus on performance and best practices",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/react-boilerplate/react-boilerplate.git"
-  },
+  "name": "pokedex-tcg",
+  "version": "1.0.0",
+  "description": "A Pokedex for Pokemon TCG using the Pokemon TCG API https://pokemontcg.io/",
   "engines": {
     "npm": ">=5",
     "node": ">=8.15.1"
   },
-  "author": "Max Stoiber",
+  "author": "Sean Macfarlane",
   "license": "MIT",
   "scripts": {
     "analyze:clean": "rimraf stats.json",
