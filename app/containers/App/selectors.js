@@ -1,11 +1,31 @@
 import { createSelector } from 'reselect';
 
-const selectRouter = state => state.router;
+const selectRoute = state => state.get('router');
+
+const selectGlobal = state => state.get('global');
 
 const makeSelectLocation = () =>
   createSelector(
-    selectRouter,
-    routerState => routerState.location,
+    selectRoute,
+    routeState => routeState.get('location').toJS()
   );
 
-export { makeSelectLocation };
+const makeSelectLoading = () =>
+  createSelector(
+    selectGlobal,
+    globalState => globalState.get('loading')
+  );
+
+const makeSelectPokemon = () =>
+  createSelector(
+    selectGlobal,
+    globalState => globalState.get('pokemon')
+  );
+
+export {
+  selectRoute,
+  selectGlobal,
+  makeSelectLocation,
+  makeSelectLoading,
+  makeSelectPokemon,
+};

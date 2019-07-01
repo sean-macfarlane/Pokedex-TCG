@@ -1,7 +1,7 @@
 {
   "name": "pokedex-tcg",
   "version": "1.0.0",
-  "description": "A Pokedex for Pokemon TCG using the Pokemon TCG API https://pokemontcg.io/",
+  "description": "Pokedex for Pokemon TCG",
   "engines": {
     "npm": ">=5",
     "node": ">=8.15.1"
@@ -35,10 +35,11 @@
     "lint:staged": "lint-staged",
     "pretest": "npm run test:clean && npm run lint",
     "test:clean": "rimraf ./coverage",
-    "test": "cross-env NODE_ENV=test jest --coverage",
+    "test": "cross-env NODE_ENV=test jest",
     "test:watch": "cross-env NODE_ENV=test jest --watchAll",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
-    "prettify": "prettier --write"
+    "prettify": "prettier --write",
+    "heroku-postbuild": "npm run build"
   },
   "browserslist": [
     "last 2 versions",
@@ -61,6 +62,8 @@
   },
   "dependencies": {
     "@babel/polyfill": "7.4.3",
+    "antd": "^3.19.8",
+    "axios": "^0.19.0",
     "chalk": "^2.4.2",
     "compression": "1.7.4",
     "connected-react-router": "6.4.0",
@@ -70,6 +73,7 @@
     "history": "4.9.0",
     "hoist-non-react-statics": "3.3.0",
     "immer": "3.0.0",
+    "immutable": "^4.0.0-rc.12",
     "intl": "1.2.5",
     "invariant": "2.2.4",
     "ip": "1.1.5",
@@ -78,11 +82,18 @@
     "prop-types": "15.7.2",
     "react": "16.8.6",
     "react-dom": "16.8.6",
+    "react-google-maps": "^9.4.5",
     "react-helmet": "6.0.0-beta",
+    "react-images": "^1.0.0",
+    "react-immutable-proptypes": "^2.1.0",
+    "react-infinite-scroller": "^1.2.4",
     "react-intl": "2.8.0",
     "react-redux": "7.0.2",
     "react-router-dom": "5.0.0",
+    "react-router-redux": "^5.0.0-alpha.9",
+    "recompose": "^0.30.0",
     "redux": "4.0.1",
+    "redux-immutable": "^4.0.0",
     "redux-saga": "1.0.2",
     "reselect": "4.0.0",
     "sanitize.css": "8.0.0",
