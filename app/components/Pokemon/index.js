@@ -5,6 +5,10 @@ import { Card as AntdCard } from 'antd';
 
 const Card = styled(AntdCard)`
   &&& {
+    max-width: 250px;
+    height: 342px;
+    background: none;
+    border-radius: 10px;
     :hover {
       opacity: 0.8;
     }
@@ -16,12 +20,11 @@ class Pokemon extends PureComponent {
     const { data } = this.props;
 
     return (
-      <div>
-        <Card
-          cover={<img src={data.get('imageUrl')} alt="Pokemon Card" />}
-          hoverable
-        />
-      </div>
+      <Card
+        bordered={false}
+        cover={<img src={data.get('imageUrl')} alt="Pokemon Card" />}
+        hoverable
+      />
     );
   }
 }

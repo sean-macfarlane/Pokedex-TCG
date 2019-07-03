@@ -56,24 +56,22 @@ class HomePage extends React.PureComponent {
 
   handleOnSearch = value => {
     const { loadPokemon } = this.props;
-    if (value && value !== '') {
-      loadPokemon(`name=${value}`, 1);
-      this.setState({ search: value, page: 1 });
-    }
+    loadPokemon(`name=${value}`, 1);
+    this.setState({ search: value, page: 1 });
   };
 
   handleInfiniteOnLoad = () => {
     const { pokemon, loadPokemon } = this.props;
     const { page, search } = this.state;
-    if (pokemon && !pokemon.get('loading') && pokemon.get('cards')) {
-      loadPokemon(search, page + 1);
+    if (pokemon && !pokemon.get('loading')) {
+      loadPokemon(`name=${search}`, page + 1);
       this.setState({ page: page + 1 });
     }
   };
 
   render() {
     const { pokemon } = this.props;
-    const { search } = this.state;
+    const { search, page } = this.state;
 
     return (
       <ContainerLayout>
@@ -84,8 +82,10 @@ class HomePage extends React.PureComponent {
         />
         <Content>
           <PokemonList
+            page={page}
             loading={pokemon && pokemon.get('loading')}
             pokemon={pokemon && pokemon.get('cards')}
+            handleInfiniteOnLoad={this.handleInfiniteOnLoad}
           />
         </Content>
       </ContainerLayout>
