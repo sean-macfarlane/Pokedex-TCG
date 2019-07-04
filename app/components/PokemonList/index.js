@@ -7,12 +7,15 @@ import InfiniteScroll from 'react-infinite-scroller';
 
 import Pokemon from 'components/Pokemon';
 
+import pokeballUrl from 'images/pokeball.png';
+
 const { Item } = AntdList;
 
 const List = styled(AntdList)`
   &&& {
     padding-top: 24px;
     overflow: hidden;
+    width: 100%;
   }
 `;
 
@@ -21,6 +24,15 @@ const ListItem = styled(Item)`
     justify-content: center;
     display: flex;
   }
+`;
+
+const InfiniteScrollContainer = styled(InfiniteScroll)`
+  width: 100%;
+`;
+
+const PokeballIcon = styled.img`
+  width: 50px;
+  margin: 8px;
 `;
 
 export class PokemonList extends PureComponent {
@@ -55,13 +67,14 @@ export class PokemonList extends PureComponent {
     const { loading, handleInfiniteOnLoad } = this.props;
     const { list } = this.state;
     return (
-      <InfiniteScroll
+      <InfiniteScrollContainer
         initialLoad={false}
         pageStart={0}
         loadMore={handleInfiniteOnLoad}
         hasMore={!loading}
       >
         <List
+          loading={loading}
           dataSource={list}
           grid={{
             gutter: 16,
@@ -77,8 +90,16 @@ export class PokemonList extends PureComponent {
               <Pokemon key={item.get('id')} data={item} />
             </ListItem>
           )}
+          locale={{
+            emptyText: (
+              <div>
+                <PokeballIcon src={pokeballUrl} alt="Pokeball" />
+                <div>No Results.</div>
+              </div>
+            ),
+          }}
         />
-      </InfiniteScroll>
+      </InfiniteScrollContainer>
     );
   }
 }

@@ -33,7 +33,7 @@ const theme = new (function theme() {
     background: '#fff',
     borderRight: '1px solid rgba(0, 0, 0, .135)',
     height: '100vh',
-    width: '400px',
+    width: '240px',
     collapsedWidth: '80px',
   };
 })();

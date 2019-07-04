@@ -19,12 +19,22 @@ import theme from 'styles';
 import Header from 'components/Header';
 import PokemonList from 'components/PokemonList';
 
-import { loadPokemonRequest } from 'containers/App/actions';
-import { makeSelectLoading, makeSelectPokemon } from 'containers/App/selectors';
+import {
+  loadPokemonRequest,
+  loadTypesRequest,
+  loadSetsRequest,
+} from 'containers/App/actions';
+import {
+  makeSelectLoading,
+  makeSelectPokemon,
+  makeSelectTypes,
+  makeSelectSets,
+} from 'containers/App/selectors';
 
 const ContainerLayout = styled(Layout)`
   &&& {
     display: flex;
+    background: none;
   }
 `;
 
@@ -40,7 +50,11 @@ const Content = styled(AntdContent)`
 class HomePage extends React.PureComponent {
   static propTypes = {
     pokemon: T.oneOfType([IT.map, T.bool]),
+    types: T.oneOfType([IT.map, T.bool]),
+    sets: T.oneOfType([IT.map, T.bool]),
     loadPokemon: T.func,
+    loadTypes: T.func,
+    loadSets: T.func,
   };
 
   constructor(props) {
@@ -48,16 +62,72 @@ class HomePage extends React.PureComponent {
 
     this.state = {
       search: '',
+      selectedTypes: [],
+      selectedSets: [],
+      typesOperatorAnd: ',',
       page: 1,
     };
   }
 
-  handleOnChange = e => this.setState({ search: e.target.value });
+  componentDidMount() {
+    const { loadTypes, loadSets } = this.props;
+    this.handleOnSearch();
+    loadTypes();
+    loadSets();
+  }
 
-  handleOnSearch = value => {
+  handleOnChangeSearch = e => this.setState({ search: e.target.value });
+
+  handleOnChangeTypes = value => {
+    this.setState({ selectedTypes: value });
+  };
+
+  handleOnChangeTypesOperator = e => {
+    this.setState({ typesOperatorAnd: e.target.value });
+  };
+
+  handleOnChangeSets = value => {
+    this.setState({ selectedSets: value });
+  };
+
+  handleOnClickReset = () => {
+    this.setState({ selectedTypes: [], selectedSets: [] });
+  };
+
+  handleOnSearch = () => {
     const { loadPokemon } = this.props;
-    loadPokemon(`name=${value}`, 1);
-    this.setState({ search: value, page: 1 });
+    const {
+      search,
+      selectedTypes,
+      selectedSets,
+      typesOperatorAnd,
+    } = this.state;
+    let query = '';
+
+    if (search) {
+      query += `name=${search}`;
+    }
+
+    if (selectedTypes && selectedTypes.length > 0) {
+      query += `&types=`;
+      selectedTypes.forEach(t => {
+        query += `${t}${typesOperatorAnd}`;
+      });
+    }
+
+    if (selectedSets && selectedSets.length > 0) {
+      query += `&setCode=`;
+      selectedSets.forEach(s => {
+        query += `${s}|`;
+      });
+    }
+
+    this.setState({ page: 1 }, loadPokemon(query, 1));
+  };
+
+  handleOnFilter = (types, sets) => {
+    const { search } = this.state;
+    this.handleOnSearch(search, types, sets);
   };
 
   handleInfiniteOnLoad = () => {
@@ -70,21 +140,36 @@ class HomePage extends React.PureComponent {
   };
 
   render() {
-    const { pokemon } = this.props;
-    const { search, page } = this.state;
+    const { pokemon, types, sets } = this.props;
+    const {
+      search,
+      page,
+      selectedTypes,
+      selectedSets,
+      typesOperatorAnd,
+    } = this.state;
 
     return (
       <ContainerLayout>
         <Header
           search={search}
-          onChange={this.handleOnChange}
+          types={types}
+          sets={sets}
+          selectedTypes={selectedTypes}
+          selectedSets={selectedSets}
+          typesOperatorAnd={typesOperatorAnd}
+          onChangeSearch={this.handleOnChangeSearch}
           onSearch={this.handleOnSearch}
+          onChangeTypes={this.handleOnChangeTypes}
+          onChangeTypesOperator={this.handleOnChangeTypesOperator}
+          onChangeSets={this.handleOnChangeSets}
+          onClickReset={this.handleOnClickReset}
         />
         <Content>
           <PokemonList
             page={page}
             loading={pokemon && pokemon.get('loading')}
-            pokemon={pokemon && pokemon.get('cards')}
+            pokemon={pokemon && pokemon.get('data')}
             handleInfiniteOnLoad={this.handleInfiniteOnLoad}
           />
         </Content>
@@ -96,11 +181,19 @@ class HomePage extends React.PureComponent {
 const mapStateToProps = createStructuredSelector({
   globalLoading: makeSelectLoading(),
   pokemon: makeSelectPokemon(),
+  types: makeSelectTypes(),
+  sets: makeSelectSets(),
 });
 
 const mapDispatchToProps = dispatch => ({
   loadPokemon: (...params) => {
     dispatch(loadPokemonRequest(...params));
+  },
+  loadTypes: (...params) => {
+    dispatch(loadTypesRequest(...params));
+  },
+  loadSets: (...params) => {
+    dispatch(loadSetsRequest(...params));
   },
 });
 

@@ -7,7 +7,13 @@ const { Search } = Input;
 
 const SearchBox = styled(Search)`
   &&& {
-    width: 400px;
+    width: 100%;
+    min-width: 100px;
+    margin: 0 8px;
+
+    @media only screen and (min-width: 769px) {
+      max-width: 400px;
+    }
   }
 `;
 

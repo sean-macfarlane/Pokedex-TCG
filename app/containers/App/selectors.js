@@ -22,10 +22,24 @@ const makeSelectPokemon = () =>
     globalState => globalState.get('pokemon')
   );
 
+const makeSelectTypes = () =>
+  createSelector(
+    selectGlobal,
+    globalState => globalState.get('types')
+  );
+
+const makeSelectSets = () =>
+  createSelector(
+    selectGlobal,
+    globalState => globalState.get('sets')
+  );
+
 export {
   selectRoute,
   selectGlobal,
   makeSelectLocation,
   makeSelectLoading,
   makeSelectPokemon,
+  makeSelectTypes,
+  makeSelectSets,
 };
