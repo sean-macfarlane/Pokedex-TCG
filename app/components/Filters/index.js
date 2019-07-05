@@ -149,6 +149,8 @@ class Filters extends PureComponent {
         trigger="click"
         visible={visible}
         onVisibleChange={this.handleVisibleChange}
+        placement="bottom"
+        getPopupContainer={n => n.parentElement}
       >
         <FiltersButton icon="filter" />
       </Popover>
