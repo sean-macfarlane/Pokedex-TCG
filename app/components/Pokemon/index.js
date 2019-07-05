@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import T from 'prop-types';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { Card as AntdCard } from 'antd';
 
@@ -20,11 +21,13 @@ class Pokemon extends PureComponent {
     const { data } = this.props;
 
     return (
-      <Card
-        bordered={false}
-        cover={<img src={data.get('imageUrl')} alt="Pokemon Card" />}
-        hoverable
-      />
+      <Link to={`/${data.get('id')}`}>
+        <Card
+          bordered={false}
+          cover={<img src={data.get('imageUrl')} alt="Pokemon Card" />}
+          hoverable
+        />
+      </Link>
     );
   }
 }

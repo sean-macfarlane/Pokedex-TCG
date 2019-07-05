@@ -2,6 +2,9 @@ import {
   LOAD_POKEMON_REQUEST,
   LOAD_POKEMON_SUCCESS,
   LOAD_POKEMON_FAILURE,
+  LOAD_POKEMON_LIST_REQUEST,
+  LOAD_POKEMON_LIST_SUCCESS,
+  LOAD_POKEMON_LIST_FAILURE,
   LOAD_TYPES_REQUEST,
   LOAD_TYPES_SUCCESS,
   LOAD_TYPES_FAILURE,
@@ -10,10 +13,9 @@ import {
   LOAD_SETS_FAILURE,
 } from './constants';
 
-export const loadPokemonRequest = (query, page) => ({
+export const loadPokemonRequest = id => ({
   type: LOAD_POKEMON_REQUEST,
-  query,
-  page,
+  id,
 });
 
 export const loadPokemonSuccess = result => ({
@@ -23,6 +25,22 @@ export const loadPokemonSuccess = result => ({
 
 export const loadPokemonFailure = error => ({
   type: LOAD_POKEMON_FAILURE,
+  error,
+});
+
+export const loadPokemonListRequest = (params, page) => ({
+  type: LOAD_POKEMON_LIST_REQUEST,
+  params,
+  page,
+});
+
+export const loadPokemonListSuccess = result => ({
+  type: LOAD_POKEMON_LIST_SUCCESS,
+  result,
+});
+
+export const loadPokemonListFailure = error => ({
+  type: LOAD_POKEMON_LIST_FAILURE,
   error,
 });
 

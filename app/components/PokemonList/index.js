@@ -40,24 +40,24 @@ export class PokemonList extends PureComponent {
     super(props);
 
     this.state = {
-      list: props.pokemon || [],
+      list: props.pokemonList || [],
       page: props.page || 1,
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    const { pokemon } = this.props;
+    const { pokemonList } = this.props;
     const { list, page } = this.state;
 
-    if (nextProps.pokemon !== pokemon) {
+    if (nextProps.pokemonList !== pokemonList) {
       if (nextProps.page > page) {
         this.setState({
           page: nextProps.page,
-          list: list.concat(nextProps.pokemon),
+          list: list.concat(nextProps.pokemonList),
         });
       } else {
         this.setState({
-          list: nextProps.pokemon,
+          list: nextProps.pokemonList,
         });
       }
     }
@@ -107,7 +107,7 @@ export class PokemonList extends PureComponent {
 PokemonList.propTypes = {
   loading: T.bool,
   handleInfiniteOnLoad: T.func,
-  pokemon: T.oneOfType([IT.list, T.array, T.bool]),
+  pokemonList: T.oneOfType([IT.list, T.array, T.bool]),
   page: T.any,
 };
 

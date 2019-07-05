@@ -6,6 +6,8 @@ import { request } from 'utils/request';
 import {
   loadPokemonSuccess,
   loadPokemonFailure,
+  loadPokemonListSuccess,
+  loadPokemonListFailure,
   loadTypesSuccess,
   loadTypesFailure,
   loadSetsSuccess,
@@ -13,12 +15,14 @@ import {
 } from './actions';
 import {
   LOAD_POKEMON_REQUEST,
+  LOAD_POKEMON_LIST_REQUEST,
   LOAD_TYPES_REQUEST,
   LOAD_SETS_REQUEST,
 } from './constants';
 
 export default function* watchGlobalActions() {
   yield takeEvery(LOAD_POKEMON_REQUEST, loadPokemonSaga);
+  yield takeEvery(LOAD_POKEMON_LIST_REQUEST, loadPokemonListSaga);
   yield takeEvery(LOAD_TYPES_REQUEST, loadTypesSaga);
   yield takeEvery(LOAD_SETS_REQUEST, loadSetsSaga);
 }
@@ -27,9 +31,7 @@ export default function* watchGlobalActions() {
 
 export function* loadPokemonSaga(action) {
   try {
-    const url = `https://api.pokemontcg.io/v1/cards?${
-      action.query
-    }&page=${action.page || 1}`;
+    const url = `https://api.pokemontcg.io/v1/cards/${action.id}`;
 
     const response = yield call(request, url);
 
@@ -41,6 +43,50 @@ export function* loadPokemonSaga(action) {
   } catch (error) {
     const failureResult = yield put(
       loadPokemonFailure(`Failed to load Pokemon`)
+    );
+
+    return failureResult;
+  }
+}
+
+/* Load Pokemon List saga start */
+
+export function* loadPokemonListSaga(action) {
+  try {
+    const { name, types, sets, typesOperator } = action.params;
+    let query = '';
+
+    if (name) {
+      query += `name=${name}`;
+    }
+
+    if (types && types.length > 0) {
+      query += `&types=`;
+      types.forEach(t => {
+        query += `${t}${typesOperator}`;
+      });
+    }
+
+    if (sets && sets.length > 0) {
+      query += `&setCode=`;
+      sets.forEach(s => {
+        query += `${s}|`;
+      });
+    }
+
+    const url = `https://api.pokemontcg.io/v1/cards?${query}&page=${action.page ||
+      1}`;
+
+    const response = yield call(request, url);
+
+    const successResult = yield put(
+      loadPokemonListSuccess(fromJS(response && response.data))
+    );
+
+    return successResult;
+  } catch (error) {
+    const failureResult = yield put(
+      loadPokemonListFailure(`Failed to load Pokemon List`)
     );
 
     return failureResult;

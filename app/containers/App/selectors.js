@@ -16,10 +16,16 @@ const makeSelectLoading = () =>
     globalState => globalState.get('loading')
   );
 
-const makeSelectPokemon = () =>
+const makeSelectSearchParams = () =>
   createSelector(
     selectGlobal,
-    globalState => globalState.get('pokemon')
+    globalState => globalState.get('searchParams')
+  );
+
+const makeSelectPokemonList = () =>
+  createSelector(
+    selectGlobal,
+    globalState => globalState.get('pokemonList')
   );
 
 const makeSelectTypes = () =>
@@ -34,11 +40,19 @@ const makeSelectSets = () =>
     globalState => globalState.get('sets')
   );
 
+const makeSelectPokemon = () =>
+  createSelector(
+    selectGlobal,
+    globalState => globalState.get('pokemon')
+  );
+
 export {
   selectRoute,
   selectGlobal,
   makeSelectLocation,
   makeSelectLoading,
+  makeSelectSearchParams,
+  makeSelectPokemonList,
   makeSelectPokemon,
   makeSelectTypes,
   makeSelectSets,

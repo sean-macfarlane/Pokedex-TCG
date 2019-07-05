@@ -1,9 +1,12 @@
-import { fromJS } from 'immutable';
+import { fromJS, Map } from 'immutable';
 
 import {
   LOAD_POKEMON_REQUEST,
   LOAD_POKEMON_SUCCESS,
   LOAD_POKEMON_FAILURE,
+  LOAD_POKEMON_LIST_REQUEST,
+  LOAD_POKEMON_LIST_SUCCESS,
+  LOAD_POKEMON_LIST_FAILURE,
   LOAD_TYPES_REQUEST,
   LOAD_TYPES_SUCCESS,
   LOAD_TYPES_FAILURE,
@@ -16,7 +19,13 @@ import {
 const initialState = fromJS({
   error: false,
   loading: false,
-  pokemon: {
+  searchParams: {
+    name: '',
+    types: [],
+    sets: [],
+    typesOperator: ',',
+  },
+  pokemonList: {
     loading: false,
     data: false,
   },
@@ -28,27 +37,33 @@ const initialState = fromJS({
     loading: false,
     data: false,
   },
+  pokemon: {
+    loading: false,
+    data: false,
+  },
 });
 
 function appReducer(currentState = initialState, action) {
   const state = currentState.setIn(['error'], false);
 
   switch (action.type) {
-    case LOAD_POKEMON_REQUEST:
-      return state.setIn(['pokemon', 'loading'], true);
-
-    case LOAD_POKEMON_SUCCESS:
+    case LOAD_POKEMON_LIST_REQUEST:
       return state
-        .setIn(['pokemon', 'loading'], false)
+        .setIn(['pokemonList', 'loading'], true)
+        .set(['searchParams'], new Map(action.params));
+
+    case LOAD_POKEMON_LIST_SUCCESS:
+      return state
+        .setIn(['pokemonList', 'loading'], false)
         .updateIn(
-          ['pokemon', 'data'],
+          ['pokemonList', 'data'],
           currentValue =>
             (action.result && action.result.get('cards')) || currentValue
         );
 
-    case LOAD_POKEMON_FAILURE:
+    case LOAD_POKEMON_LIST_FAILURE:
       return state
-        .setIn(['pokemon', 'loading'], false)
+        .setIn(['pokemonList', 'loading'], false)
         .set('error', action.error);
 
     case LOAD_TYPES_REQUEST:
@@ -82,6 +97,23 @@ function appReducer(currentState = initialState, action) {
 
     case LOAD_SETS_FAILURE:
       return state.setIn(['sets', 'loading'], false).set('error', action.error);
+
+    case LOAD_POKEMON_REQUEST:
+      return state.setIn(['pokemon', 'loading'], true);
+
+    case LOAD_POKEMON_SUCCESS:
+      return state
+        .setIn(['pokemon', 'loading'], false)
+        .updateIn(
+          ['pokemon', 'data'],
+          currentValue =>
+            (action.result && action.result.get('card')) || currentValue
+        );
+
+    case LOAD_POKEMON_FAILURE:
+      return state
+        .setIn(['pokemon', 'loading'], false)
+        .set('error', action.error);
 
     default:
       return state;
