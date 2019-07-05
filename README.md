@@ -1,4 +1,5 @@
 # Pokedex-TCG
+https://pokedextcg.herokuapp.com/
 
 React app that is a Pokédex for the TCG using the Pokémon TCG API (https://pokemontcg.io/) 
 
