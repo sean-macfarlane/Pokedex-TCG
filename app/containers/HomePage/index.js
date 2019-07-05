@@ -47,7 +47,12 @@ class HomePage extends React.PureComponent {
 
   handleInfiniteOnLoad = () => {
     const { pokemonList } = this.props;
-    this.loadPokemon(pokemonList.get('page') + 1);
+    if (
+      pokemonList &&
+      pokemonList.get('data').size < pokemonList.get('totalCount')
+    ) {
+      this.loadPokemon(pokemonList.get('page') + 1);
+    }
   };
 
   render() {
@@ -58,6 +63,7 @@ class HomePage extends React.PureComponent {
         loading={pokemonList && pokemonList.get('loading')}
         pokemonList={pokemonList && pokemonList.get('data')}
         handleInfiniteOnLoad={this.handleInfiniteOnLoad}
+        totalCount={pokemonList && pokemonList.get('totalCount')}
       />
     );
   }

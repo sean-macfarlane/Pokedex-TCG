@@ -37,13 +37,19 @@ const PokeballIcon = styled.img`
 
 export class PokemonList extends PureComponent {
   render() {
-    const { loading, handleInfiniteOnLoad, pokemonList } = this.props;
+    const {
+      loading,
+      handleInfiniteOnLoad,
+      pokemonList,
+      totalCount,
+    } = this.props;
+
     return (
       <InfiniteScrollContainer
         initialLoad={false}
         pageStart={0}
         loadMore={handleInfiniteOnLoad}
-        hasMore={!loading}
+        hasMore={!loading && pokemonList && pokemonList.size < totalCount}
       >
         <List
           loading={loading}
@@ -80,6 +86,7 @@ PokemonList.propTypes = {
   loading: T.bool,
   handleInfiniteOnLoad: T.func,
   pokemonList: T.oneOfType([IT.list, T.array, T.bool]),
+  totalCount: T.any,
 };
 
 export default PokemonList;

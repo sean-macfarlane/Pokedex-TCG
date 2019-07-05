@@ -23,6 +23,7 @@ const initialState = fromJS({
     loading: false,
     data: false,
     page: 1,
+    totalCount: 0,
   },
   types: {
     loading: false,
@@ -50,6 +51,10 @@ function appReducer(currentState = initialState, action) {
     case LOAD_POKEMON_LIST_SUCCESS:
       return state
         .setIn(['pokemonList', 'loading'], false)
+        .setIn(
+          ['pokemonList', 'totalCount'],
+          action.headers && action.headers['total-count']
+        )
         .updateIn(['pokemonList', 'data'], currentValue => {
           const page = state.getIn(['pokemonList', 'page']);
           if (page > 1) {

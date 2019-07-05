@@ -34,9 +34,10 @@ export const loadPokemonListRequest = (params, page) => ({
   page,
 });
 
-export const loadPokemonListSuccess = result => ({
+export const loadPokemonListSuccess = (result, headers) => ({
   type: LOAD_POKEMON_LIST_SUCCESS,
   result,
+  headers,
 });
 
 export const loadPokemonListFailure = error => ({

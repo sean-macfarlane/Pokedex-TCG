@@ -80,7 +80,10 @@ export function* loadPokemonListSaga(action) {
     const response = yield call(request, url);
 
     const successResult = yield put(
-      loadPokemonListSuccess(fromJS(response && response.data))
+      loadPokemonListSuccess(
+        fromJS(response && response.data),
+        response && response.headers
+      )
     );
 
     return successResult;
