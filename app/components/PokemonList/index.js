@@ -36,36 +36,8 @@ const PokeballIcon = styled.img`
 `;
 
 export class PokemonList extends PureComponent {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      list: props.pokemonList || [],
-      page: props.page || 1,
-    };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { pokemonList } = this.props;
-    const { list, page } = this.state;
-
-    if (nextProps.pokemonList !== pokemonList) {
-      if (nextProps.page > page) {
-        this.setState({
-          page: nextProps.page,
-          list: list.concat(nextProps.pokemonList),
-        });
-      } else {
-        this.setState({
-          list: nextProps.pokemonList,
-        });
-      }
-    }
-  }
-
   render() {
-    const { loading, handleInfiniteOnLoad } = this.props;
-    const { list } = this.state;
+    const { loading, handleInfiniteOnLoad, pokemonList } = this.props;
     return (
       <InfiniteScrollContainer
         initialLoad={false}
@@ -75,7 +47,7 @@ export class PokemonList extends PureComponent {
       >
         <List
           loading={loading}
-          dataSource={list}
+          dataSource={pokemonList || []}
           grid={{
             gutter: 16,
             xs: 1,
@@ -108,7 +80,6 @@ PokemonList.propTypes = {
   loading: T.bool,
   handleInfiniteOnLoad: T.func,
   pokemonList: T.oneOfType([IT.list, T.array, T.bool]),
-  page: T.any,
 };
 
 export default PokemonList;

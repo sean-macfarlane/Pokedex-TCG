@@ -16,12 +16,6 @@ const makeSelectLoading = () =>
     globalState => globalState.get('loading')
   );
 
-const makeSelectSearchParams = () =>
-  createSelector(
-    selectGlobal,
-    globalState => globalState.get('searchParams')
-  );
-
 const makeSelectPokemonList = () =>
   createSelector(
     selectGlobal,
@@ -51,7 +45,6 @@ export {
   selectGlobal,
   makeSelectLocation,
   makeSelectLoading,
-  makeSelectSearchParams,
   makeSelectPokemonList,
   makeSelectPokemon,
   makeSelectTypes,

@@ -11,54 +11,50 @@ import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import T from 'prop-types';
 import IT from 'react-immutable-proptypes';
+import qs from 'qs';
 
 import PokemonList from 'components/PokemonList';
 
 import { loadPokemonListRequest } from 'containers/App/actions';
 import {
+  makeSelectLocation,
   makeSelectLoading,
   makeSelectPokemonList,
-  makeSelectSearchParams,
 } from 'containers/App/selectors';
 
 class HomePage extends React.PureComponent {
   static propTypes = {
     pokemonList: T.oneOfType([IT.map, T.bool]),
     loadPokemonList: T.func,
-    searchParams: IT.map,
+    location: T.object,
   };
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      page: 1,
-    };
-  }
-
   componentDidMount() {
-    const { pokemonList, loadPokemonList, searchParams } = this.props;
-    if (pokemonList && !pokemonList.get('loading')) {
-      loadPokemonList(searchParams.toJS(), 1);
+    const { pokemonList } = this.props;
+    if (!pokemonList || !pokemonList.get('data')) {
+      this.loadPokemon(1);
     }
   }
+
+  loadPokemon = page => {
+    const { pokemonList, loadPokemonList, location } = this.props;
+    const query = qs.parse(location.search.slice(1));
+
+    if (pokemonList && !pokemonList.get('loading')) {
+      loadPokemonList({ ...query }, page);
+    }
+  };
 
   handleInfiniteOnLoad = () => {
-    const { pokemonList, loadPokemonList, searchParams } = this.props;
-    const { page } = this.state;
-    if (pokemonList && !pokemonList.get('loading')) {
-      loadPokemonList(searchParams.toJS(), page + 1);
-      this.setState({ page: page + 1 });
-    }
+    const { pokemonList } = this.props;
+    this.loadPokemon(pokemonList.get('page') + 1);
   };
 
   render() {
     const { pokemonList } = this.props;
-    const { page } = this.state;
 
     return (
       <PokemonList
-        page={page}
         loading={pokemonList && pokemonList.get('loading')}
         pokemonList={pokemonList && pokemonList.get('data')}
         handleInfiniteOnLoad={this.handleInfiniteOnLoad}
@@ -70,7 +66,7 @@ class HomePage extends React.PureComponent {
 const mapStateToProps = createStructuredSelector({
   globalLoading: makeSelectLoading(),
   pokemonList: makeSelectPokemonList(),
-  searchParams: makeSelectSearchParams(),
+  location: makeSelectLocation(),
 });
 
 const mapDispatchToProps = dispatch => ({

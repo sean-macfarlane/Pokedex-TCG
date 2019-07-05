@@ -60,7 +60,10 @@ class PokemonPage extends React.PureComponent {
             <Col lg={12} md={24}>
               <Card title={data.get('name')}>
                 {data.get('nationalPokedexNumber') ? (
-                  <Row>{`#${data.get('nationalPokedexNumber')}`}</Row>
+                  <Row>
+                    <Label>Pokédex #</Label>
+                    {data.get('nationalPokedexNumber')}
+                  </Row>
                 ) : null}
                 <Row>{`${data.get('supertype')} ${data.get('subtype')}`}</Row>
                 {data.get('evolvesFrom') ? (
@@ -78,6 +81,10 @@ class PokemonPage extends React.PureComponent {
                 <Row>
                   <Label>Rarity: </Label>
                   {data.get('rarity')}
+                </Row>
+                <Row>
+                  <Label>Series: </Label>
+                  {data.get('series')}
                 </Row>
                 <Row>
                   <Label>Set: </Label>

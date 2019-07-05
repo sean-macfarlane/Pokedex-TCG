@@ -13,6 +13,8 @@ import T from 'prop-types';
 import IT from 'react-immutable-proptypes';
 import { Layout } from 'antd';
 import styled from 'styled-components';
+import qs from 'qs';
+import { replace, push } from 'react-router-redux';
 
 import theme from 'styles';
 
@@ -24,8 +26,8 @@ import {
   loadSetsRequest,
 } from 'containers/App/actions';
 import {
+  makeSelectLocation,
   makeSelectLoading,
-  makeSelectSearchParams,
   makeSelectTypes,
   makeSelectSets,
 } from 'containers/App/selectors';
@@ -51,25 +53,24 @@ class MasterLayout extends React.PureComponent {
     children: T.node,
     types: T.oneOfType([IT.map, T.bool]),
     sets: T.oneOfType([IT.map, T.bool]),
-    searchParams: IT.map,
     loadPokemonList: T.func,
     loadTypes: T.func,
     loadSets: T.func,
+    historyReplace: T.func,
+    redirect: T.func,
+    location: T.object,
   };
 
   constructor(props) {
     super(props);
+
+    const query = qs.parse(props.location.search.slice(1));
+
     this.state = {
-      search: props.searchParams.get('name') || '',
-      selectedTypes:
-        (props.searchParams.get('types') &&
-          props.searchParams.get('types').toJS()) ||
-        [],
-      selectedSets:
-        (props.searchParams.get('sets') &&
-          props.searchParams.get('sets').toJS()) ||
-        [],
-      typesOperatorAnd: props.searchParams.get('typesOperator') || ',',
+      search: query.name || '',
+      selectedTypes: query.types || [],
+      selectedSets: query.sets || [],
+      typesOperatorAnd: query.typesOperator || ',',
     };
   }
 
@@ -77,6 +78,30 @@ class MasterLayout extends React.PureComponent {
     const { loadTypes, loadSets } = this.props;
     loadTypes();
     loadSets();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { loadPokemonList, historyReplace } = this.props;
+
+    // Reloads home page to default when Logo clicked
+    if (
+      nextProps.location.state === 'reset' &&
+      nextProps.location.pathname === '/'
+    ) {
+      historyReplace({
+        state: null,
+      });
+      window.scrollTo(0, 0);
+      this.setState(
+        {
+          search: '',
+          selectedTypes: [],
+          selectedSets: [],
+          typesOperatorAnd: ',',
+        },
+        loadPokemonList({}, 1)
+      );
+    }
   }
 
   handleOnChangeSearch = e => this.setState({ search: e.target.value });
@@ -98,7 +123,7 @@ class MasterLayout extends React.PureComponent {
   };
 
   handleOnSearch = () => {
-    const { loadPokemonList } = this.props;
+    const { loadPokemonList, historyReplace, location, redirect } = this.props;
     const {
       search,
       selectedTypes,
@@ -106,6 +131,28 @@ class MasterLayout extends React.PureComponent {
       typesOperatorAnd,
     } = this.state;
 
+    if (location.pathname !== '/') {
+      redirect({
+        pathname: '/',
+        search: qs.stringify({
+          name: search,
+          types: selectedTypes,
+          sets: selectedSets,
+          typesOperator: typesOperatorAnd,
+        }),
+      });
+    } else {
+      historyReplace({
+        search: qs.stringify({
+          name: search,
+          types: selectedTypes,
+          sets: selectedSets,
+          typesOperator: typesOperatorAnd,
+        }),
+      });
+    }
+
+    window.scrollTo(0, 0);
     loadPokemonList(
       {
         name: search,
@@ -152,10 +199,14 @@ const mapStateToProps = createStructuredSelector({
   globalLoading: makeSelectLoading(),
   types: makeSelectTypes(),
   sets: makeSelectSets(),
-  searchParams: makeSelectSearchParams(),
+  location: makeSelectLocation(),
 });
 
 const mapDispatchToProps = dispatch => ({
+  historyReplace: (...args) => {
+    dispatch(replace(...args));
+  },
+  redirect: path => dispatch(push(path)),
   loadPokemonList: (...params) => {
     dispatch(loadPokemonListRequest(...params));
   },

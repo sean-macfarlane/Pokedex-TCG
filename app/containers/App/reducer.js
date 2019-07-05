@@ -1,4 +1,4 @@
-import { fromJS, Map } from 'immutable';
+import { fromJS } from 'immutable';
 
 import {
   LOAD_POKEMON_REQUEST,
@@ -19,15 +19,10 @@ import {
 const initialState = fromJS({
   error: false,
   loading: false,
-  searchParams: {
-    name: '',
-    types: [],
-    sets: [],
-    typesOperator: ',',
-  },
   pokemonList: {
     loading: false,
     data: false,
+    page: 1,
   },
   types: {
     loading: false,
@@ -50,16 +45,24 @@ function appReducer(currentState = initialState, action) {
     case LOAD_POKEMON_LIST_REQUEST:
       return state
         .setIn(['pokemonList', 'loading'], true)
-        .set(['searchParams'], new Map(action.params));
+        .setIn(['pokemonList', 'page'], action.page);
 
     case LOAD_POKEMON_LIST_SUCCESS:
       return state
         .setIn(['pokemonList', 'loading'], false)
-        .updateIn(
-          ['pokemonList', 'data'],
-          currentValue =>
-            (action.result && action.result.get('cards')) || currentValue
-        );
+        .updateIn(['pokemonList', 'data'], currentValue => {
+          const page = state.getIn(['pokemonList', 'page']);
+          if (page > 1) {
+            return (
+              (action.result &&
+                action.result.get('cards') &&
+                currentValue.concat(action.result.get('cards'))) ||
+              currentValue
+            );
+          }
+
+          return (action.result && action.result.get('cards')) || currentValue;
+        });
 
     case LOAD_POKEMON_LIST_FAILURE:
       return state

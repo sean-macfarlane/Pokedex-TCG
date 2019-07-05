@@ -105,7 +105,12 @@ class GlobalHeader extends PureComponent {
 
     return (
       <FixedHeader>
-        <LogoContainer to="/">
+        <LogoContainer
+          to={{
+            pathname: '/',
+            state: 'reset',
+          }}
+        >
           <img src={logoUrl} alt="logo" height="32" />
         </LogoContainer>
         <SearchBox>
