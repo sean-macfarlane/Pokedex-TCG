@@ -10,7 +10,7 @@ import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import T from 'prop-types';
 import IT from 'react-immutable-proptypes';
-import { Spin, Card, Row, Col } from 'antd';
+import { Spin, Card, Row, Col, Button, Icon } from 'antd';
 
 import { loadPokemonRequest } from 'containers/App/actions';
 import { makeSelectLoading, makeSelectPokemon } from 'containers/App/selectors';
@@ -32,11 +32,25 @@ const Label = styled.span`
   font-weight: bold;
 `;
 
+const BackButton = styled(Button)`
+  &&& {
+    color: rgba(0, 0, 0, 0.65);
+    .anticon {
+      vertical-align: 0;
+    }
+    :hover {
+      opacity: 0.8;
+    }
+    margin-bottom: 24px;
+  }
+`;
+
 class PokemonPage extends React.PureComponent {
   static propTypes = {
     match: T.any,
     pokemon: T.oneOfType([IT.map, T.bool]),
     loadPokemon: T.func,
+    history: T.object,
   };
 
   componentDidMount() {
@@ -47,12 +61,16 @@ class PokemonPage extends React.PureComponent {
   }
 
   render() {
-    const { pokemon } = this.props;
+    const { pokemon, history } = this.props;
 
     if (!pokemon.get('loading') && pokemon.get('data')) {
       const data = pokemon.get('data');
       return (
         <Container>
+          <BackButton type="link" size="large" onClick={history.goBack}>
+            <Icon type="arrow-left" />
+            {`Back to results`}
+          </BackButton>
           <Row gutter={24}>
             <Col lg={12} md={24}>
               <CardImg src={data.get('imageUrlHiRes')} alt={data.get('name')} />
@@ -78,10 +96,12 @@ class PokemonPage extends React.PureComponent {
                     {data.get('types')}
                   </Row>
                 ) : null}
-                <Row>
-                  <Label>Rarity: </Label>
-                  {data.get('rarity')}
-                </Row>
+                {data.get('rarity') ? (
+                  <Row>
+                    <Label>Rarity: </Label>
+                    {data.get('rarity')}
+                  </Row>
+                ) : null}
                 <Row>
                   <Label>Series: </Label>
                   {data.get('series')}
@@ -90,10 +110,12 @@ class PokemonPage extends React.PureComponent {
                   <Label>Set: </Label>
                   {data.get('set')}
                 </Row>
-                <Row>
-                  <Label>Artist: </Label>
-                  {data.get('artist')}
-                </Row>
+                {data.get('artist') ? (
+                  <Row>
+                    <Label>Artist: </Label>
+                    {data.get('artist')}
+                  </Row>
+                ) : null}
               </Card>
             </Col>
           </Row>
