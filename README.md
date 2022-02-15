@@ -5,6 +5,8 @@ React app that is a Pokédex for the TCG using the Pokémon TCG API (https://pok
 
 Built on React-Boilerplate (https://github.com/react-boilerplate/react-boilerplate)
 
+![image](https://user-images.githubusercontent.com/12651916/154145511-ade1c8b7-ac02-403a-aa5a-7ac74af2c3ba.png)
+
 ## Set up environment:
 		
 	Install Dependencies 
